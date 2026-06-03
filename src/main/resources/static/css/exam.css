@@ -1,0 +1,348 @@
+/* =========================================================
+   SSC CGL EXAM PORTAL — EXAM-SPECIFIC STYLES
+   ========================================================= */
+
+/* Override body for exam attempt page */
+body.exam-page {
+    overflow: hidden;
+    height: 100vh;
+}
+
+body.exam-page .exam-wrapper {
+    height: 100vh;
+    overflow: hidden;
+}
+
+body.exam-page .exam-body {
+    height: calc(100vh - 60px);
+    overflow: hidden;
+}
+
+body.exam-page .exam-main {
+    overflow-y: auto;
+}
+
+body.exam-page .exam-sidebar {
+    overflow-y: auto;
+}
+
+/* ---- Timer urgency states ---- */
+.timer-normal { color: #fff !important; }
+.timer-caution { color: #ffdd57 !important; }
+.timer-warn { color: #ffa726 !important; animation: blink 1s ease-in-out infinite; }
+.timer-critical { color: #ff4444 !important; animation: blink 0.5s ease-in-out infinite; }
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* ---- Section progress mini bars ---- */
+.section-mini-progress {
+    height: 3px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 3px;
+}
+
+.section-mini-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.8);
+    transition: width 0.4s ease;
+}
+
+/* ---- Instruction page ---- */
+.instruction-page { padding: 32px 0 60px; }
+
+.instruction-hero {
+    background: linear-gradient(135deg, #1a3c6e, #2a5298);
+    color: #fff;
+    border-radius: 12px;
+    padding: 30px 32px;
+    margin-bottom: 24px;
+}
+
+.instruction-hero h3 {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-bottom: 6px;
+}
+
+.instruction-hero p { color: rgba(255,255,255,0.8); margin: 0; font-size: 0.9rem; }
+
+.pattern-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+}
+
+.pattern-table th {
+    background: #f0f4fc;
+    color: #1a3c6e;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    letter-spacing: 0.4px;
+    padding: 12px 14px;
+    border: 1.5px solid #e0e4ed;
+}
+
+.pattern-table td {
+    padding: 11px 14px;
+    border: 1.5px solid #e0e4ed;
+    vertical-align: middle;
+}
+
+.pattern-table tr:nth-child(even) td { background: #f9fafc; }
+
+.marking-scheme-box {
+    border-radius: 10px;
+    padding: 18px 20px;
+    text-align: center;
+}
+
+.marking-scheme-box .mark-val {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.marking-scheme-box .mark-lbl {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-top: 4px;
+}
+
+.inst-list { padding-left: 0; list-style: none; }
+.inst-list li {
+    padding: 8px 0 8px 28px;
+    position: relative;
+    font-size: 0.88rem;
+    color: #2c3e50;
+    border-bottom: 1px solid #f0f0f0;
+    line-height: 1.5;
+}
+
+.inst-list li:last-child { border-bottom: none; }
+
+.inst-list li::before {
+    content: '\f26c';
+    font-family: 'Bootstrap Icons';
+    position: absolute;
+    left: 0;
+    top: 9px;
+    color: #1a3c6e;
+    font-size: 0.9rem;
+}
+
+/* Agree checkbox styling */
+.agree-checkbox-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: #f0f4fc;
+    border: 1.5px solid #c0cce8;
+    border-radius: 8px;
+    padding: 16px 18px;
+    cursor: pointer;
+}
+
+.agree-checkbox-wrapper input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    cursor: pointer;
+    accent-color: #1a3c6e;
+    flex-shrink: 0;
+}
+
+.agree-checkbox-wrapper label {
+    font-size: 0.88rem;
+    color: #1a3c6e;
+    cursor: pointer;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+/* ---- Sidebar section tabs ---- */
+.sidebar-section-select {
+    padding: 10px 14px;
+    border-bottom: 1px solid #e0e4ed;
+    background: #f4f6fb;
+}
+
+.sidebar-section-select select {
+    width: 100%;
+    border: 1.5px solid #c0c8d8;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #1a3c6e;
+    background: #fff;
+}
+
+/* ---- Saving indicator ---- */
+.save-indicator {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(26,60,110,0.92);
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 3000;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.save-indicator.visible { opacity: 1; }
+
+/* ---- Network status ---- */
+.network-offline-bar {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: #dc3545;
+    color: #fff;
+    text-align: center;
+    padding: 8px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    z-index: 2000;
+    display: none;
+}
+
+.network-offline-bar.visible { display: block; }
+
+/* ---- Question status ribbon ---- */
+.q-status-ribbon {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+}
+
+.q-status-ribbon.answered { background: #d4edda; color: #155724; }
+.q-status-ribbon.not-answered { background: #f8d7da; color: #721c24; }
+.q-status-ribbon.marked { background: #e8d5f5; color: #4a235a; }
+.q-status-ribbon.not-visited { background: #e9ecef; color: #495057; }
+
+/* ---- Review screen ---- */
+.review-header-strip {
+    background: linear-gradient(135deg, #1a3c6e, #2a5298);
+    color: #fff;
+    padding: 20px 0;
+    margin-bottom: 24px;
+}
+
+.review-summary-pills {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+.summary-pill {
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.summary-pill.sp-answered { background: #28a745; }
+.summary-pill.sp-not-answered { background: #dc3545; }
+.summary-pill.sp-marked { background: #6f42c1; }
+.summary-pill.sp-not-visited { background: #6c757d; }
+
+/* ---- Submit modal ---- */
+.submit-modal-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.submit-stat-box {
+    background: #f4f6fb;
+    border-radius: 8px;
+    padding: 14px;
+    text-align: center;
+}
+
+.submit-stat-box .ssb-val {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.submit-stat-box .ssb-lbl {
+    font-size: 0.75rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    margin-top: 3px;
+}
+
+.submit-stat-box.green .ssb-val { color: #28a745; }
+.submit-stat-box.red .ssb-val { color: #dc3545; }
+.submit-stat-box.grey .ssb-val { color: #6c757d; }
+.submit-stat-box.purple .ssb-val { color: #6f42c1; }
+
+/* ---- Time expired overlay ---- */
+.time-up-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    display: none;
+}
+
+.time-up-overlay.visible { display: flex; }
+
+.time-up-box {
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+}
+
+.time-up-box .time-up-icon {
+    font-size: 4rem;
+    color: #dc3545;
+    margin-bottom: 16px;
+}
+
+.time-up-box h3 {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: #1a3c6e;
+    margin-bottom: 8px;
+}
+
+.time-up-box p { color: #6c757d; font-size: 0.9rem; }
