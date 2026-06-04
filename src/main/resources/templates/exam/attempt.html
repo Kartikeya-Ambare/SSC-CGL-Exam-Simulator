@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSC CGL Exam | Attempt</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link th:href="@{/css/main.css}" rel="stylesheet">
+    <link th:href="@{/css/exam.css}" rel="stylesheet">
+</head>
+<body class="exam-body" id="examBody">
+
+<!-- Exam Data (hidden elements for JS) -->
+<div id="exam-state-data" th:utext="${examStateJson}" style="display:none"></div>
+<span id="session-id-data" th:text="${sessionId}" style="display:none"></span>
+<span id="csrf-token-data" th:text="${_csrf.token}" style="display:none"></span>
+<span id="csrf-header-data" th:text="${_csrf.headerName}" style="display:none"></span>
+
+<!-- ===== EXAM HEADER ===== -->
+<div class="exam-header">
+    <div class="exam-header-left">
+        <div class="exam-logo">⚡ SSC CGL</div>
+        <div class="exam-title">Tier-I Mock Examination</div>
+    </div>
+    <div class="exam-header-center">
+        <div class="timer-display">
+            <span class="timer-label">TIME REMAINING</span>
+            <span class="timer-value" id="timer-display">60:00</span>
+        </div>
+    </div>
+    <div class="exam-header-right">
+        <div class="candidate-info">
+            <span class="candidate-name" th:text="${user.fullName}">Candidate</span>
+            <span class="attempt-num">Attempt #<span th:text="${session.attemptNumber}">1</span></span>
+        </div>
+    </div>
+</div>
+
+<!-- ===== SECTION TABS (on top, below header) ===== -->
+<div class="section-tabs" id="sectionTabs">
+    <button class="sec-tab section-tab active" data-section="GENERAL_AWARENESS" onclick="jumpToSection('GENERAL_AWARENESS')">
+        <span class="sec-tab-short">G.A.</span><span class="sec-tab-full">General Awareness</span>
+    </button>
+    <button class="sec-tab section-tab" data-section="VERBAL_ABILITY" onclick="jumpToSection('VERBAL_ABILITY')">
+        <span class="sec-tab-short">Eng.</span><span class="sec-tab-full">English Comprehension</span>
+    </button>
+    <button class="sec-tab section-tab" data-section="LOGICAL_REASONING" onclick="jumpToSection('LOGICAL_REASONING')">
+        <span class="sec-tab-short">G.I.</span><span class="sec-tab-full">General Intelligence</span>
+    </button>
+    <button class="sec-tab section-tab" data-section="QUANTITATIVE_APTITUDE" onclick="jumpToSection('QUANTITATIVE_APTITUDE')">
+        <span class="sec-tab-short">Q.A.</span><span class="sec-tab-full">Quantitative Aptitude</span>
+    </button>
+</div>
+
+<!-- ===== MAIN LAYOUT: Question area + Sidebar ===== -->
+<div class="exam-main-layout">
+
+    <!-- Question Area -->
+    <div class="question-area">
+        <div class="question-header">
+            <div class="q-meta">
+                <span class="q-number" id="q-position">Question 1 of 100</span>
+                <span class="q-section-label" id="q-section">General Awareness</span>
+                <span class="q-topic" id="q-topic"></span>
+            </div>
+            <div class="q-marks">
+                <span class="mark-correct">+2</span>
+                <span class="mark-wrong">-0.33</span>
+            </div>
+        </div>
+
+        <div class="q-status-ribbon not-visited" id="q-status-ribbon">Not Visited</div>
+
+        <div class="question-body">
+            <div class="question-text" id="question-text">Loading question...</div>
+            <ul class="options-container" id="options-container"></ul>
+        </div>
+
+        <div class="question-actions">
+            <button class="btn btn-outline-secondary btn-action" onclick="clearResponse()">
+                <i class="bi bi-x-circle me-1"></i>Clear Response
+            </button>
+            <button class="btn btn-outline-warning btn-action" onclick="markForReview()">
+                <i class="bi bi-bookmark me-1"></i>Mark for Review &amp; Next
+            </button>
+            <button class="btn btn-outline-primary btn-action" onclick="saveAndNext()">
+                <i class="bi bi-check2 me-1"></i>Save &amp; Next
+            </button>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="btn btn-secondary" onclick="goToPrev()" id="btn-prev">
+                <i class="bi bi-chevron-left me-1"></i>Previous
+            </button>
+            <div class="nav-center">
+                <span class="section-progress" id="sectionProgress"></span>
+            </div>
+            <button class="btn btn-primary" onclick="goToNext()" id="btn-next-q">
+                Next <i class="bi bi-chevron-right ms-1"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Right Sidebar -->
+    <div class="exam-sidebar">
+        <!-- Stats -->
+        <div class="sidebar-stats">
+            <div class="stat-mini stat-answered">
+                <span class="stat-mini-num" id="stat-answered">0</span>
+                <span class="stat-mini-label">Answered</span>
+            </div>
+            <div class="stat-mini stat-not-answered">
+                <span class="stat-mini-num" id="stat-not-answered">0</span>
+                <span class="stat-mini-label">Not Answered</span>
+            </div>
+            <div class="stat-mini stat-not-visited">
+                <span class="stat-mini-num" id="stat-not-visited">0</span>
+                <span class="stat-mini-label">Not Visited</span>
+            </div>
+            <div class="stat-mini stat-marked">
+                <span class="stat-mini-num" id="stat-marked">0</span>
+                <span class="stat-mini-label">Marked</span>
+            </div>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="overall-progress mt-2 mb-3 px-2">
+            <div class="progress" style="height:8px;">
+                <div class="progress-bar bg-success" id="overall-progress-bar" style="width:0%">0%</div>
+            </div>
+        </div>
+
+        <!-- Question Palette -->
+        <div class="palette-header">
+            <span>Question Palette</span>
+        </div>
+
+        <div class="section-palette" id="sectionPalette">
+            <div class="palette-section-label">General Awareness</div>
+            <div class="palette-grid" id="palette-GENERAL_AWARENESS"></div>
+
+            <div class="palette-section-label">English Comprehension</div>
+            <div class="palette-grid" id="palette-VERBAL_ABILITY"></div>
+
+            <div class="palette-section-label">General Intelligence</div>
+            <div class="palette-grid" id="palette-LOGICAL_REASONING"></div>
+
+            <div class="palette-section-label">Quantitative Aptitude</div>
+            <div class="palette-grid" id="palette-QUANTITATIVE_APTITUDE"></div>
+        </div>
+
+        <!-- Submit buttons — always visible, sticky at bottom -->
+        <div class="sidebar-submit">
+            <a th:href="@{/exam/{id}/review(id=${sessionId})}" class="btn btn-outline-warning w-100 mb-2">
+                <i class="bi bi-list-check me-2"></i>Review Answers
+            </a>
+            <button class="btn btn-danger w-100 btn-submit-exam" onclick="showSubmitModal()">
+                <i class="bi bi-send-fill me-2"></i>SUBMIT EXAM
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Submit Confirmation Modal -->
+<div class="modal fade" id="submitModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-exam">
+            <div class="modal-header border-0">
+                <h5 class="modal-title"><i class="bi bi-send-check-fill me-2 text-warning"></i>Confirm Submission</h5>
+            </div>
+            <div class="modal-body">
+                <div class="submit-summary" id="submitSummary">
+                    <p>Are you sure you want to submit the exam?</p>
+                    <div class="submit-stats-grid">
+                        <div class="submit-stat">
+                            <span class="submit-stat-val text-success" id="modal-answered">0</span>
+                            <span class="submit-stat-label">Answered</span>
+                        </div>
+                        <div class="submit-stat">
+                            <span class="submit-stat-val text-danger" id="modal-not-answered">0</span>
+                            <span class="submit-stat-label">Not Answered</span>
+                        </div>
+                        <div class="submit-stat">
+                            <span class="submit-stat-val text-secondary" id="modal-not-visited">0</span>
+                            <span class="submit-stat-label">Not Visited</span>
+                        </div>
+                        <div class="submit-stat">
+                            <span class="submit-stat-val text-warning" id="modal-marked">0</span>
+                            <span class="submit-stat-label">Marked</span>
+                        </div>
+                    </div>
+                    <p class="mt-3 text-muted small">Note: Marked for Review questions without a selected answer will be treated as unattempted.</p>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-arrow-left me-1"></i>Go Back
+                </button>
+                <button type="button" class="btn btn-danger" id="confirm-submit-btn" onclick="confirmSubmit()">
+                    <i class="bi bi-send-fill me-1"></i>Submit Exam
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Time Up Overlay -->
+<div class="time-up-overlay" id="time-up-overlay">
+    <div class="time-up-content">
+        <i class="bi bi-alarm-fill text-danger fs-1"></i>
+        <h4 class="mt-3">Time's Up!</h4>
+        <p>Your exam time has expired. Auto-submitting...</p>
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Submitting...</span>
+        </div>
+    </div>
+</div>
+
+<!-- Offline bar -->
+<div class="offline-bar" id="offline-bar">
+    <i class="bi bi-wifi-off me-2"></i>You are offline. Answers may not be saved.
+</div>
+
+<!-- Save indicator -->
+<div class="save-indicator" id="save-indicator">
+    <i class="bi bi-check-circle-fill me-1"></i> Saved
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/exam.js}"></script>
+</body>
+</html>

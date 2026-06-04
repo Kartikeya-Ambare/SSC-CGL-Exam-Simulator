@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Dashboard')}"></head>
+<body class="dashboard-body">
+
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+
+<main class="page-main">
+<div class="container-fluid px-4 py-4">
+
+    <!-- Welcome Banner -->
+    <div class="welcome-banner mb-4">
+        <div class="welcome-banner-bg"></div>
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="avatar-circle-lg">
+                    <span th:text="${#strings.substring(user.fullName, 0, 1).toUpperCase()}">U</span>
+                </div>
+                <div>
+                    <div class="welcome-greeting">Welcome back,</div>
+                    <h2 class="welcome-name" th:text="${user.fullName}">Candidate</h2>
+                    <div class="welcome-sub">SSC CGL Tier-I Practice Portal</div>
+                </div>
+            </div>
+            <div th:if="${activeSession != null}" class="resume-badge">
+                <i class="bi bi-hourglass-split me-2"></i>Exam In Progress!
+                <a th:href="@{/exam/{id}/attempt(id=${activeSession.id})}" class="btn btn-warning btn-sm ms-2">
+                    <i class="bi bi-play-fill"></i> Resume
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert -->
+    <div th:if="${errorMsg}" class="alert alert-danger alert-dismissible fade show mb-4">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span th:text="${errorMsg}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="stat-card-new stat-blue">
+                <div class="stat-card-icon"><i class="bi bi-journal-check"></i></div>
+                <div class="stat-card-value" th:text="${totalAttempts}">0</div>
+                <div class="stat-card-label">Total Attempts</div>
+                <div class="stat-card-shine"></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card-new stat-green">
+                <div class="stat-card-icon"><i class="bi bi-trophy-fill"></i></div>
+                <div class="stat-card-value" th:text="${bestScore != null ? #numbers.formatDecimal(bestScore, 1, 1) : '--'}">--</div>
+                <div class="stat-card-label">Best Score /200</div>
+                <div class="stat-card-shine"></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card-new stat-orange">
+                <div class="stat-card-icon"><i class="bi bi-collection-fill"></i></div>
+                <div class="stat-card-value" th:text="${gaCount + vaCount + lrCount + qaCount}">0</div>
+                <div class="stat-card-label">Questions in Bank</div>
+                <div class="stat-card-shine"></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card-new stat-purple">
+                <div class="stat-card-icon"><i class="bi bi-stopwatch-fill"></i></div>
+                <div class="stat-card-value">60</div>
+                <div class="stat-card-label">Minutes per Exam</div>
+                <div class="stat-card-shine"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="row g-4">
+
+        <!-- Left: Start Exam + Question Bank -->
+        <div class="col-lg-5">
+
+            <!-- Start Exam Card -->
+            <div class="exam-launch-card mb-3">
+                <div class="exam-launch-header">
+                    <div class="exam-launch-icon"><i class="bi bi-pencil-square"></i></div>
+                    <div>
+                        <div class="exam-launch-title">SSC CGL Tier-I Mock Test</div>
+                        <div class="exam-launch-sub">100 Questions · 200 Marks · 60 Minutes</div>
+                    </div>
+                </div>
+
+                <div class="exam-pattern-rows">
+                    <div class="pattern-row-item">
+                        <div class="pattern-dot dot-ga"></div>
+                        <span class="pattern-section-name">General Awareness</span>
+                        <span class="pattern-section-marks">25 Qs × 2 = <strong>50 Marks</strong></span>
+                    </div>
+                    <div class="pattern-row-item">
+                        <div class="pattern-dot dot-va"></div>
+                        <span class="pattern-section-name">English Comprehension</span>
+                        <span class="pattern-section-marks">25 Qs × 2 = <strong>50 Marks</strong></span>
+                    </div>
+                    <div class="pattern-row-item">
+                        <div class="pattern-dot dot-lr"></div>
+                        <span class="pattern-section-name">General Intelligence</span>
+                        <span class="pattern-section-marks">25 Qs × 2 = <strong>50 Marks</strong></span>
+                    </div>
+                    <div class="pattern-row-item">
+                        <div class="pattern-dot dot-qa"></div>
+                        <span class="pattern-section-name">Quantitative Aptitude</span>
+                        <span class="pattern-section-marks">25 Qs × 2 = <strong>50 Marks</strong></span>
+                    </div>
+                </div>
+
+                <div class="marking-strip">
+                    <div class="marking-pill pill-correct"><i class="bi bi-check-circle-fill"></i> +2 Correct</div>
+                    <div class="marking-pill pill-wrong"><i class="bi bi-x-circle-fill"></i> −0.33 Wrong</div>
+                    <div class="marking-pill pill-skip"><i class="bi bi-dash-circle-fill"></i> 0 Skip</div>
+                </div>
+
+                <div th:if="${activeSession != null}" class="mt-3">
+                    <div class="alert-ongoing">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        You have an ongoing exam. Resume before time expires!
+                    </div>
+                    <a th:href="@{/exam/{id}/attempt(id=${activeSession.id})}" class="btn-launch btn-launch-resume w-100">
+                        <i class="bi bi-play-circle-fill me-2"></i>RESUME EXAM
+                    </a>
+                </div>
+                <div th:if="${activeSession == null}" class="mt-3">
+                    <a th:href="@{/exam/instructions}" class="btn-launch w-100">
+                        <i class="bi bi-lightning-charge-fill me-2"></i>START NEW TEST
+                    </a>
+                </div>
+            </div>
+
+            <!-- Question Bank -->
+            <div class="qbank-card-new">
+                <div class="qbank-card-title">
+                    <i class="bi bi-database-fill me-2"></i>Question Bank
+                </div>
+                <div class="qbank-row-new">
+                    <div class="qbank-row-dot dot-ga"></div>
+                    <span class="qbank-row-label">General Awareness</span>
+                    <span class="qbank-row-count" th:text="${gaCount}">0</span>
+                </div>
+                <div class="qbank-row-new">
+                    <div class="qbank-row-dot dot-va"></div>
+                    <span class="qbank-row-label">English Comprehension</span>
+                    <span class="qbank-row-count" th:text="${vaCount}">0</span>
+                </div>
+                <div class="qbank-row-new">
+                    <div class="qbank-row-dot dot-lr"></div>
+                    <span class="qbank-row-label">General Intelligence</span>
+                    <span class="qbank-row-count" th:text="${lrCount}">0</span>
+                </div>
+                <div class="qbank-row-new">
+                    <div class="qbank-row-dot dot-qa"></div>
+                    <span class="qbank-row-label">Quantitative Aptitude</span>
+                    <span class="qbank-row-count" th:text="${qaCount}">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Recent Attempts -->
+        <div class="col-lg-7">
+            <div class="card h-100">
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <span><i class="bi bi-clock-history me-2 text-primary"></i>Recent Attempts</span>
+                    <a th:href="@{/history}" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-list-ul me-1"></i>View All
+                    </a>
+                </div>
+
+                <!-- Empty state -->
+                <div th:if="${#lists.isEmpty(history)}" class="empty-state-box">
+                    <div class="empty-state-icon">📝</div>
+                    <h5 class="empty-state-title">No Attempts Yet</h5>
+                    <p class="empty-state-text">Start your first SSC CGL mock test to see results here.</p>
+                    <a th:href="@{/exam/instructions}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-lightning-charge-fill me-1"></i>Start First Test
+                    </a>
+                </div>
+
+                <!-- Table -->
+                <div th:if="${!#lists.isEmpty(history)}" class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-custom mb-0">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Score</th>
+                                    <th>Correct</th>
+                                    <th>Accuracy</th>
+                                    <th>Time</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="r, iter : ${#lists.subList(history, 0, #numbers.min(5, history.size()))}">
+                                    <td>
+                                        <span class="attempt-num-badge" th:text="'#' + r.attemptNumber">#1</span>
+                                    </td>
+                                    <td>
+                                        <span class="fw-700"
+                                              th:classappend="${r.totalScore >= 140 ? 'text-success' : r.totalScore >= 100 ? 'text-warning' : 'text-danger'}"
+                                              th:text="${#numbers.formatDecimal(r.totalScore, 1, 1)}">0</span>
+                                        <span class="text-muted small">/200</span>
+                                    </td>
+                                    <td>
+                                        <span class="text-success fw-600" th:text="${r.totalCorrect}">0</span>
+                                        <span class="text-muted small">/100</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="accuracy-bar">
+                                                <div class="accuracy-fill" th:style="'width:' + ${r.accuracyPercentage} + '%'"></div>
+                                            </div>
+                                            <small th:text="${#numbers.formatDecimal(r.accuracyPercentage, 1, 1) + '%'}">0%</small>
+                                        </div>
+                                    </td>
+                                    <td><small class="text-muted" th:text="${r.timeTakenFormatted}">--</small></td>
+                                    <td>
+                                        <a th:href="@{/exam/{id}/result(id=${r.sessionId})}" class="btn btn-xs btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</main>
+
+<footer th:replace="~{fragments/layout :: footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>
